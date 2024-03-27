@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Counter App</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+    }
+    #counter {
+        font-size: 3em;
+        margin-bottom: 20px;
+    }
+    button {
+        font-size: 1.2em;
+        padding: 10px 20px;
+        margin: 0 10px;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+<div id="counter">0</div>
+<button id="increaseBtn">Increase</button>
+<button id="decreaseBtn">Decrease</button>
+
+<script>
+    const counterElement = document.getElementById('counter');
+    const increaseButton = document.getElementById('increaseBtn');
+    const decreaseButton = document.getElementById('decreaseBtn');
+
+    function updateCounter() {
+        fetch('/api/current-counter')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch counter');
+                }
+                return response.json();
+            })
+            .then(data => {
+                counterElement.textContent = data.value;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    increaseButton.addEventListener('click', () => {
+        fetch('/api/current-counter/increase', { method: 'PUT' })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to increase counter');
+                }
+                updateCounter();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+
+    decreaseButton.addEventListener('click', () => {
+        fetch('/api/current-counter/decrease', { method: 'PUT' })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to decrease counter');
+                }
+                updateCounter();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+
+    // Initial fetch to display the current counter value
+    updateCounter();
+</script>
+</body>
+</html>

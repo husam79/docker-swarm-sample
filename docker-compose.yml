@@ -1,0 +1,45 @@
+version: "3.9"
+
+volumes:
+  counter-vol:
+
+services:
+  db:
+    image: postgres:13.3-buster
+    platform: linux/arm64/v8
+    volumes:
+      - counter-vol:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ecpassword
+      PGUSER: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready --username=postgres --dbname=postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  
+  backend:
+    build:
+      context: ./
+    environment:
+      DB_HOST: db
+      DB_PORT: 0
+      DB_USER: postgres
+      DB_PASSWORD: ecpassword
+      DB_NAME: counter_db
+      LISTEN_PORT: 3000
+    # ports:
+    #   - "8082:3111"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend/
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
