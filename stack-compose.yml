@@ -1,0 +1,32 @@
+version: "3.9"
+
+volumes:
+  counter-vol:
+
+services:
+  db:
+    image: postgres:13.3-buster
+    volumes:
+      - counter-vol:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ecpassword
+      PGUSER: postgres
+  
+  backend:
+    image: husamburhan/easy-company:counter-backend-1.0
+    environment:
+      DB_HOST: db
+      DB_PORT: 0
+      DB_USER: postgres
+      DB_PASSWORD: ecpassword
+      DB_NAME: counter_db
+      LISTEN_PORT: 3000
+
+  frontend:
+    image: husamburhan/easy-company:counter-frontend-1.0
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
