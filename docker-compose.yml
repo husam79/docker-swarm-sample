@@ -30,8 +30,6 @@ services:
       DB_PASSWORD: ecpassword
       DB_NAME: counter_db
       LISTEN_PORT: 3000
-    # ports:
-    #   - "8082:3111"
     depends_on:
       db:
         condition: service_healthy
@@ -41,5 +39,5 @@ services:
       context: ./frontend/
     ports:
       - "80:80"
-    depends_on:
+    depends_on: # The section: "depends_on" is important here, so the nginx config file can recognize the backend container directly
       - backend

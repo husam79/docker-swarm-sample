@@ -27,7 +27,7 @@ const seedDBIfRequired = async () => {
         await client.query('select * from counter_tbl')
         client.release()
     } catch(err){
-        console.log(JSON.stringify(err))
+        // console.log(JSON.stringify(err))
         terminatePool(pool)
         pool = createPool('postgres')
         let client = await pool.connect()
@@ -52,7 +52,7 @@ const getCurrentCounter = async () => {
     const r = await client.query('select * from counter_tbl')
     client.release()
     return r.rows[0]['current_value']
-    }
+}
 
 const increaseCounter = async () => {
     const client = await pool.connect()
@@ -72,4 +72,7 @@ seedDBIfRequired().then(() => {
     console.log('DB connected.')
 })
 
-app.listen(process.env.LISTEN_PORT, () => console.log(`Listening on port ${process.env.LISTEN_PORT}`))
+app.listen(
+    process.env.LISTEN_PORT,
+    () => console.log(`Listening on port ${process.env.LISTEN_PORT}`)
+)
